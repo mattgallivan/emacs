@@ -33,15 +33,21 @@
 ;; KEY BINDINGS
 ;;
 ;; = Navigation & Search =
-;; C-c g		(consult-goto-line)	Jump to a line.
-;; C-c w		(avy-goto-char)		Jump to a visible character.
-;; C-c l		(avy-goto-line))	Jump to a visible line.
-;; C-s			(consult-line)		Search lines.
+;; C-c g		(consult-goto-line)		Jump to a line.
+;; C-c w		(avy-goto-char)			Jump to a visible character.
+;; C-c l		(avy-goto-line))		Jump to a visible line.
+;; C-s			(consult-line)			Search lines.
+;; S-<arrow>		(windmove-<arrow>)		Switch buffer.
+;;
+;; = Projects =
+;; C-c p D		(projectile-dired)		Open dired for the project.
+;; C-c p f		(projectile-find-file)		Find file in the project.
+;; C-c p b		(projectile-switch-to-buffer)	Switch buffer in the project.
 ;;
 ;; = Help & Documentation =
-;; C-h m		(describe-mode)		Describe the current modes.
-;; C-h b		(describe-bindings)	Describe the current bindings.
-;; C-h v		(describe-variable)	Describe a variable.
+;; C-h m		(describe-mode)			Describe the current modes.
+;; C-h b		(describe-bindings)		Describe the current bindings.
+;; C-h v		(describe-variable)		Describe a variable.
 ;;
 ;;; Code:
 
@@ -55,9 +61,27 @@
 ;; Ignore custom changes.
 (setq custom-file (make-temp-file "emacs-custom"))
 
+;; Move between buffers with Shift + arrows.
+(when (fboundp 'windmove-default-keybindings)
+  (windmove-default-keybindings))
+
+;; Accept completion on first enter (don't require hitting enter twice).
+(setq completion-require-final-newline nil)
+
+;; - - - - -
+;; c++
+;; - - - - -
+
+(add-hook 'c++-mode-hook
+	  (lambda ()
+	    (setq indent-tabs-mode t
+		  tab-width 4
+		  c-basic-offset 4)))
+
 ;; - - - - -
 ;; theme
 ;; - - - - -
+
 (load-theme 'wombat)
 
 ;; - - - - -
@@ -107,6 +131,38 @@
   (corfu-preview-current nil)
   (corfu-popupinfo-delay '(0 . 0)))
 
+(use-package dashboard
+  ;; Dashboard shown on start.
+  :config
+  (dashboard-setup-startup-hook)  
+  :custom
+  (dashboard-projects-backend 'projectile)
+  (dashboard-startup-banner "~/.config/emacs/logo-ascii.txt")
+  (dashboard-banner-logo-title nil)
+  (dashboard-center-content t)
+  (dashboard-items '((recents . 5)
+		     (projects . 5)
+		     (bookmarks . 5)
+		     (agenda . 5)))
+  (dashboard-footer-messages
+   '("There are two kinds of creation myths: those where life arises out of the mud, and those where life falls from the sky. In this creation myth, computers arose from the mud, and code fell from the sky."
+     "Nothing is so painful to the human mind as a great and sudden change."
+     "Much of the engineering of computers takes place in silence, while engineers pace in hallways or sit alone and gaze at blank pages."
+     "You can't let the little pricks generation gap you."
+     "It's a universal principle operating throughout the universe; the entire universe is moving toward a final state of total, absolute kippleization."
+     "Either this is madness or it is Hell. It is neither, calmly replied the voice of the Sphere, it is Knowledge; it is Three Dimensions: open your eye once again and try to look steadily."
+     "For now, what is important is not finding the answer, but looking for it."
+     "I knew who I was this morning, but I've changed a few times since then.")))
+
+(use-package eglot
+  ;; Client for Language Server Protocol.
+  :ensure nil
+  :custom
+  (eglot-ignored-server-capabilities
+   '(:documentFormattingProvider
+     :documentOnTypeFormattingProvider
+     :documentRangeFormattingProvider)))
+
 (use-package esup
   ;; Benchmark startup time.
   :defer t
@@ -124,6 +180,20 @@
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))))
+
+(use-package projectile
+  ;; Project management.
+  :config
+  (projectile-mode +1)
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :custom
+  (projectile-indexing-method 'alien)
+  (projectile-enable-caching 'persistent)
+  (projectile-git-command
+   "rg --files --hidden --follow -0 -g \"'*.c\" -g \"*.cc\" -g \"*.cxx\" -g \"*.cpp\" -g \"*.h\" -g \"*.hh\" -g \"*.hpp\" -g \"*.hxx\"")
+  (projectile-generic-command
+   "rg --files --hidden --follow -0 -g \"'*.c\" -g \"*.cc\" -g \"*.cxx\" -g \"*.cpp\" -g \"*.h\" -g \"*.hh\" -g \"*.hpp\" -g \"*.hxx\""))
 
 (use-package vertico
   ;; Vertical completion in the minibuffer.
