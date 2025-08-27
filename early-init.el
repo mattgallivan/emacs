@@ -47,7 +47,7 @@
 (defvar early--file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
-(add-hook 'emacs-startup-hook
+(add-hook 'after-init-hook
           (lambda ()
             (setq file-name-handler-alist
                   (delete-dups (append file-name-handler-alist
@@ -58,10 +58,6 @@
  frame-inhibit-implied-resize t
  frame-resize-pixelwise t
  inhibit-compacting-font-caches t
- ;; Speed up packages.
- load-prefer-newer nil
- package-enable-at-startup nil
- package-quickstart t
  ;; Increase LSP and subprocess throughput.
  read-process-output-max (* 4 1024 1024)
  ;; Skip system site initializtion.
