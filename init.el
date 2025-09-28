@@ -44,6 +44,9 @@
 ;; C-c p f		(projectile-find-file)		Find file in the project.
 ;; C-c p b		(projectile-switch-to-buffer)	Switch buffer in the project.
 ;;
+;; = Git =
+;; C-x g		(magit-status)			Open the magit status buffer.
+;;
 ;; = Help & Documentation =
 ;; C-h m		(describe-mode)			Describe the current modes.
 ;; C-h b		(describe-bindings)		Describe the current bindings.
@@ -173,6 +176,10 @@
   :defer t
   :custom
   (esup-depth 0))
+
+(use-package magit
+  :defer t
+  :bind (("C-x g" . magit-status)))
 
 (use-package marginalia
   ;; Marks annotations in the minibuffer.
