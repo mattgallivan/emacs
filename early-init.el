@@ -66,7 +66,7 @@
 ;; Set up the UI.
 (setq default-frame-alist
         (append
-         `((font . "JetBrains Mono-12")
+         `((font . "FiraCode Nerd Font Mono-12")
            (fullscreen . maximized)
            (menu-bar-lines . 0)
            (tool-bar-lines . 0)
