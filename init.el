@@ -39,6 +39,9 @@
 ;; C-s			(consult-line)			Search lines.
 ;; S-<arrow>		(windmove-<arrow>)		Switch buffer.
 ;;
+;; = Editing =
+;; C-c f		(clang-format-buffer)		Format the buffer according to .clang-format.
+;;
 ;; = Projects =
 ;; C-c p D		(projectile-dired)		Open dired for the project.
 ;; C-c p f		(projectile-find-file)		Find file in the project.
@@ -80,11 +83,10 @@
 ;; c++
 ;; - - - - -
 
-(add-hook 'c++-mode-hook
-	  (lambda ()
-	    (setq indent-tabs-mode t
-		  tab-width 4
-		  c-basic-offset 4)))
+(add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+(add-to-list 'auto-mode-alist '("\\.ixx\\'" . c++-mode))
+
+(add-hook 'c++-mode-hook #'clang-format+-mode)
 
 ;; - - - - -
 ;; theme
@@ -120,6 +122,12 @@
    ("C-c l" . avy-goto-line))
   :custom
   (avy-background t))
+
+(use-package clang-format
+  ;; Format C++ using .clang-format.
+  :commands (clang-format-buffer clang-format-region)
+  :bind
+  ("C-c f" . clang-format-buffer))
 
 (use-package consult
   ;; Search and navigation commands.
